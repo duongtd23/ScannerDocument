@@ -70,18 +70,23 @@ public class PdfManagement {
                         Document document = new Document(PageSize.A4, 0, 0, 0, 0);
                         PdfWriter.getInstance(document, new FileOutputStream(outputFile));
                         document.open();
-                        Image image = Image.getInstance(((ByteArrayOutputStream)output).toByteArray());
+                        ByteArrayOutputStream temp = (ByteArrayOutputStream)output;
+                        Image image = Image.getInstance(temp.toByteArray());
                         image.scaleToFit(PageSize.A4);
                         document.add(image);
                         document.close();
                         Toast.makeText(activity, "Success! " + outputFile + " created", Toast.LENGTH_SHORT).show();
                     } catch (DocumentException e1) {
+                        Toast.makeText(activity, "pdf fail", Toast.LENGTH_SHORT).show();
                         e1.printStackTrace();
                     } catch (FileNotFoundException e1) {
+                        Toast.makeText(activity, "pdf fail", Toast.LENGTH_SHORT).show();
                         e1.printStackTrace();
                     } catch (MalformedURLException e1) {
+                        Toast.makeText(activity, "pdf fail", Toast.LENGTH_SHORT).show();
                         e1.printStackTrace();
                     } catch (IOException e1) {
+                        Toast.makeText(activity, "pdf fail", Toast.LENGTH_SHORT).show();
                         e1.printStackTrace();
                     }
                 }
