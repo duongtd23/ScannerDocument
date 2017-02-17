@@ -17,6 +17,15 @@ public class CompressImageTask extends AsyncTask<OutputStream, Void, OutputStrea
     private Bitmap bitmapImage;
     private ProgressDialog progressDialog;
     private Activity activity;
+    private boolean showGUI = true;
+
+    public boolean isShowGUI() {
+        return showGUI;
+    }
+
+    public void setShowGUI(boolean showGUI) {
+        this.showGUI = showGUI;
+    }
 
     public AsyncResponse delegate = null;
 
@@ -37,11 +46,18 @@ public class CompressImageTask extends AsyncTask<OutputStream, Void, OutputStrea
         progressDialog = new ProgressDialog(activity);
     }
 
+    public CompressImageTask(Bitmap bitmap, Activity activity) {
+        this.bitmapImage = bitmap;
+        this.activity = activity;
+    }
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        progressDialog.setMessage(message);
-        progressDialog.show();
+        if (showGUI) {
+            progressDialog.setMessage(message);
+            progressDialog.show();
+        }
     }
 
     @Override
@@ -68,9 +84,11 @@ public class CompressImageTask extends AsyncTask<OutputStream, Void, OutputStrea
     @Override
     protected void onPostExecute(OutputStream result) {
         super.onPostExecute(result);
-        if (progressDialog.isShowing())
-            progressDialog.dismiss();
-        delegate.processFinish(result);
-//        Toast.makeText(activity, MESSAGE_SAVE_SUCCESS + " " + fileName, Toast.LENGTH_LONG).show();
+        if (showGUI) {
+            if (progressDialog.isShowing())
+                progressDialog.dismiss();
+            delegate.processFinish(result);
+        }
+// Toast.makeText(activity, MESSAGE_SAVE_SUCCESS + " " + fileName, Toast.LENGTH_LONG).show();
     }
 }

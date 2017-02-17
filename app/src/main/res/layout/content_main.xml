@@ -13,9 +13,11 @@
     tools:context="com.duongtd.scannerdocument.activities.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView0"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:id="@+id/txt" />
+        android:scrollbars="vertical"
+        android:scrollbarStyle="outsideOverlay"
+        />
 </RelativeLayout>

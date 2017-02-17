@@ -50,4 +50,8 @@ public class Utils {
 //        mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
+
+    public static String currentTimeNoSecond(){
+        return new SimpleDateFormat("HH:mm MM-dd-yyyy").format(new Date());
+    }
 }

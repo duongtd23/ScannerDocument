@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.duongtd.scannerdocument.asynctask.AsyncResponse;
 import com.duongtd.scannerdocument.asynctask.CompressImageTask;
+import com.duongtd.scannerdocument.asynctask.ExportPdfTask;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
@@ -59,39 +60,53 @@ public class PdfManagement {
     //so slow after compress
     public static void exportPdfFile(Activity activity, Bitmap bitmap, String outputFile){
         
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        CompressImageTask compressImageTask = new CompressImageTask(bitmap, activity, new AsyncResponse() {
+//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//        CompressImageTask compressImageTask = new CompressImageTask(bitmap, activity, new AsyncResponse() {
+//            @Override
+//            public void processFinish(Object output) {
+//                if (output instanceof ByteArrayOutputStream) {
+//                    try {
+//                        File file = new File(outputFile);
+//                        file.getParentFile().mkdirs();
+//                        Document document = new Document(PageSize.A4, 0, 0, 0, 0);
+//                        PdfWriter.getInstance(document, new FileOutputStream(outputFile));
+//                        document.open();
+//                        ByteArrayOutputStream temp = (ByteArrayOutputStream)output;
+//                        Image image = Image.getInstance(temp.toByteArray());
+//                        image.scaleToFit(PageSize.A4);
+//                        document.add(image);
+//                        document.close();
+//                        Toast.makeText(activity, "Success! " + outputFile + " created", Toast.LENGTH_SHORT).show();
+//                    } catch (DocumentException e1) {
+//                        Toast.makeText(activity, "pdf fail", Toast.LENGTH_SHORT).show();
+//                        e1.printStackTrace();
+//                    } catch (FileNotFoundException e1) {
+//                        Toast.makeText(activity, "pdf fail", Toast.LENGTH_SHORT).show();
+//                        e1.printStackTrace();
+//                    } catch (MalformedURLException e1) {
+//                        Toast.makeText(activity, "pdf fail", Toast.LENGTH_SHORT).show();
+//                        e1.printStackTrace();
+//                    } catch (IOException e1) {
+//                        Toast.makeText(activity, "pdf fail", Toast.LENGTH_SHORT).show();
+//                        e1.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
+//        compressImageTask.execute(stream);
+
+        ExportPdfTask exportPdfTask = new ExportPdfTask(activity, bitmap, outputFile, new AsyncResponse() {
             @Override
             public void processFinish(Object output) {
-                if (output instanceof ByteArrayOutputStream) {
-                    try {
-                        File file = new File(outputFile);
-                        file.getParentFile().mkdirs();
-                        Document document = new Document(PageSize.A4, 0, 0, 0, 0);
-                        PdfWriter.getInstance(document, new FileOutputStream(outputFile));
-                        document.open();
-                        ByteArrayOutputStream temp = (ByteArrayOutputStream)output;
-                        Image image = Image.getInstance(temp.toByteArray());
-                        image.scaleToFit(PageSize.A4);
-                        document.add(image);
-                        document.close();
+                if (output instanceof Integer) {
+                    int i = (int)output;
+                    if (i == ExportPdfTask.FAIL)
+                        Toast.makeText(activity, "pdf fail", Toast.LENGTH_SHORT).show();
+                    else if (i == ExportPdfTask.SUCCESS)
                         Toast.makeText(activity, "Success! " + outputFile + " created", Toast.LENGTH_SHORT).show();
-                    } catch (DocumentException e1) {
-                        Toast.makeText(activity, "pdf fail", Toast.LENGTH_SHORT).show();
-                        e1.printStackTrace();
-                    } catch (FileNotFoundException e1) {
-                        Toast.makeText(activity, "pdf fail", Toast.LENGTH_SHORT).show();
-                        e1.printStackTrace();
-                    } catch (MalformedURLException e1) {
-                        Toast.makeText(activity, "pdf fail", Toast.LENGTH_SHORT).show();
-                        e1.printStackTrace();
-                    } catch (IOException e1) {
-                        Toast.makeText(activity, "pdf fail", Toast.LENGTH_SHORT).show();
-                        e1.printStackTrace();
-                    }
                 }
             }
         });
-        compressImageTask.execute(stream);
+        exportPdfTask.execute();
     }
 }

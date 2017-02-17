@@ -15,7 +15,7 @@ import java.util.Map;
  * Created by duongtd on 16/02/2017.
  */
 
-public class CropImageAsyncTask extends AsyncTask<Void, Bitmap, Bitmap> {
+public class CropImageTask extends AsyncTask<Void, Bitmap, Bitmap> {
 
     private Map<Integer, PointF> points;
     private int sWidth, sHeight;
@@ -25,8 +25,8 @@ public class CropImageAsyncTask extends AsyncTask<Void, Bitmap, Bitmap> {
     private static final String PROGRESS_MESSAGE = "Cropping";
     public AsyncResponse delegate = null;
 
-    public CropImageAsyncTask(Activity activity, Bitmap bitmap, Map<Integer, PointF> points,
-                              int sWidth, int sHeight, AsyncResponse delegate) {
+    public CropImageTask(Activity activity, Bitmap bitmap, Map<Integer, PointF> points,
+                         int sWidth, int sHeight, AsyncResponse delegate) {
         this.activity = activity;
         this.bitmap = bitmap;
         this.points = points;

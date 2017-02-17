@@ -18,7 +18,6 @@ public final class ActivityHelper {
 
     private static final CharSequence TAKE_PHOTO = "Take Photo";
     private static final CharSequence CHOOSE_PHOTO = "Choose Photo";
-    private static final CharSequence CARD_READER = "Card Reader";
     private static final CharSequence CANCEL = "Cancel";
     private static final String PHOTO_MESSAGE = "Select Photo";
 
@@ -42,8 +41,7 @@ public final class ActivityHelper {
             if (items[item].equals(TAKE_PHOTO)) {
                 Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                activity.startActivityForResult(captureIntent,
-                        activityCamera);
+                activity.startActivityForResult(captureIntent, activityCamera);
             } else if (items[item].equals(CHOOSE_PHOTO)) {
                 Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                 i.addCategory(Intent.CATEGORY_OPENABLE);

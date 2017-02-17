@@ -1,11 +1,9 @@
 package com.duongtd.scannerdocument.util;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -13,7 +11,6 @@ import android.widget.Toast;
 
 import com.duongtd.scannerdocument.asynctask.AsyncResponse;
 import com.duongtd.scannerdocument.asynctask.CompressImageTask;
-import com.duongtd.scannerdocument.asynctask.CropImageAsyncTask;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,9 +27,13 @@ public class ImageSaver {
     private String directoryName = "images";
     private String fileName = "image.png";
     private Activity activity;
-    private boolean external = true;
+    private boolean external = false;
     private static final String MESSAGE_SAVE_SUCCESS = "Export success";
 
+
+    public String getFileName() {
+        return fileName;
+    }
 
     public ImageSaver(Activity activity) {
         this.activity = activity;
@@ -77,9 +78,9 @@ public class ImageSaver {
             directory = getAlbumStorageDir(directoryName);
         }
         else {
+//            directory = activity.getCacheDir();
             directory = activity.getDir(directoryName, Context.MODE_PRIVATE);
         }
-
         return new File(directory, fileName);
     }
 
@@ -132,48 +133,28 @@ public class ImageSaver {
         return file;
     }
 
-//    private class CompressImageTask extends AsyncTask<Void, Void, Void>{
-//
-//        private Bitmap bitmapImage;
-//        private ProgressDialog progressDialog;
-//        public CompressImageTask(Bitmap bitmap){
-//            this.bitmapImage = bitmap;
-//            progressDialog = new ProgressDialog(activity);
-//        }
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//            progressDialog.setMessage(MESSAGE_COMPRESS_IMAGE);
-//            progressDialog.show();
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... params) {
-//            FileOutputStream fileOutputStream = null;
-//            try {
-//                fileOutputStream = new FileOutputStream(createFile());
-//                bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            } finally {
-//                try {
-//                    if (fileOutputStream != null) {
-//                        fileOutputStream.close();
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//            if (progressDialog.isShowing())
-//                progressDialog.dismiss();
-//            Toast.makeText(activity, MESSAGE_SAVE_SUCCESS + " " + fileName, Toast.LENGTH_LONG).show();
-//        }
-//    }
+    public static File getFileCache(Activity activity, String fileName){
+        File directory;
+        directory = activity.getCacheDir();
+        return new File(directory, fileName);
+    }
+
+    public static String saveImagePrivateNormal(Activity activity, Bitmap bitmap, String fileName, String dir){
+        FileOutputStream fileOutputStream = null;
+        File file = getFilePrivateNormal(activity, dir, fileName);
+        try {
+            fileOutputStream = new FileOutputStream(file);
+            CompressImageTask compressImageTask = new CompressImageTask(bitmap, activity);
+            compressImageTask.setShowGUI(false);
+            compressImageTask.execute(fileOutputStream);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return file.getAbsolutePath();
+    }
+
+    public static File getFilePrivateNormal(Activity activity, String directoryName, String fileName){
+        File directory = activity.getDir(directoryName, Context.MODE_PRIVATE);
+        return new File(directory, fileName);
+    }
 }

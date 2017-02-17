@@ -11,4 +11,11 @@
     <dimen name="scanPadding">16dp</dimen>
     <dimen name="polygonViewCircleWidth">32dp</dimen>
     <dimen name="polygonViewStrokeWidth">2dp</dimen>
+
+
+    <!-- document display list -->
+    <dimen name="thumbPadding">5dp</dimen>
+    <dimen name="document_text_padding">10dp</dimen>
+    <dimen name="document_row_height">100dp</dimen>
+    <dimen name="text_title_size">18dp</dimen>
 </resources>

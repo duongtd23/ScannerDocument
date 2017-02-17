@@ -7,4 +7,6 @@
     <!-- Image Processing -->
     <color name="image_processing_polygon_view_circle_stroke">#ff59a9ff</color>
     <color name="image_processing_polygon_view_circle_background">#90e5f8ff</color>
+
+    <color name="line_color">#d1282b2e</color>
 </resources>

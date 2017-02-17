@@ -4,8 +4,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Environment;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -19,6 +22,31 @@ public class BitmapUtil {
         Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
         Utils.safeClose(inputStream);
         return bitmap;
+    }
+
+    /**
+     * Get Image Uri when clicked from Camera
+     *
+     * @return Uri of clicked Image
+     */
+    public static Uri getBitmapUri() {
+        File imageStorageDir = new File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                "myCache");
+        if (!imageStorageDir.exists()) {
+            imageStorageDir.mkdirs();
+        }
+        File file = null;
+        try {
+            file = File.createTempFile(
+                    "IMG_" + String.valueOf(System.currentTimeMillis()),
+                    ".jpg",
+                    imageStorageDir
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Uri.fromFile(file);
     }
 
 }

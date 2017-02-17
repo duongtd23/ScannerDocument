@@ -1,12 +1,8 @@
 package com.duongtd.scannerdocument.activities;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
-import android.media.Image;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,14 +14,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.duongtd.scannerdocument.MyNDK;
 import com.duongtd.scannerdocument.R;
 import com.duongtd.scannerdocument.asynctask.AsyncResponse;
-import com.duongtd.scannerdocument.asynctask.CropImageAsyncTask;
+import com.duongtd.scannerdocument.asynctask.CropImageTask;
 import com.duongtd.scannerdocument.asynctask.ImageProcessingTask;
+import com.duongtd.scannerdocument.database.DatabaseHandler;
+import com.duongtd.scannerdocument.object.Document;
 import com.duongtd.scannerdocument.pdf.PdfManagement;
+import com.duongtd.scannerdocument.util.AppConstant;
 import com.duongtd.scannerdocument.util.Utils;
 import com.duongtd.scannerdocument.util.BitmapUtil;
 import com.duongtd.scannerdocument.util.ImageSaver;
@@ -48,8 +45,9 @@ public class ImageProcessingActivity extends AppCompatActivity {
 
     PhotoViewAttacher mAttacher;
 
-    private static final String DIRECTORY_NAME = "ScannerDocument";
+//    private static final String DIRECTORY_NAME = "ScannerDocument";
     private static final int STEPS = 5;
+    private static final int BITMAP_WITDTH_THUMB = 500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +91,7 @@ public class ImageProcessingActivity extends AppCompatActivity {
                 if (isScanPointsValid(points)) {
                     System.gc();
                     mPolygonOutline.setVisibility(View.GONE);
-                    CropImageAsyncTask cropImageAsyncTask = new CropImageAsyncTask(ImageProcessingActivity.this,
+                    CropImageTask cropImageTask = new CropImageTask(ImageProcessingActivity.this,
                             bitmap, points, imageView.getWidth(), imageView.getHeight(), new AsyncResponse() {
                         @Override
                         public void processFinish(Object output) {
@@ -104,7 +102,7 @@ public class ImageProcessingActivity extends AppCompatActivity {
                                 Log.d("error", "Cast type error");
                         }
                     });
-                    cropImageAsyncTask.execute();
+                    cropImageTask.execute();
                 }
             }
         });
@@ -113,9 +111,18 @@ public class ImageProcessingActivity extends AppCompatActivity {
         btnPdf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String fileName = Utils.getCurrentTime();
                 String output = Environment.getExternalStorageDirectory().getAbsolutePath() +
-                        "/ScannerPdf/" + Utils.getCurrentTime() + ".pdf";
+                        "/" + AppConstant.APP_FOLDER + "/" + fileName + ".pdf";
                 PdfManagement.exportPdfFile(ImageProcessingActivity.this, bitmap, output);
+                String date = Utils.currentTimeNoSecond();
+
+                //image thumbnail
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(
+                        bitmap, BITMAP_WITDTH_THUMB, bitmap.getHeight() * BITMAP_WITDTH_THUMB / bitmap.getWidth(), false);
+                String img_thumb = ImageSaver.saveImagePrivateNormal(ImageProcessingActivity.this,
+                                        resizedBitmap, fileName, AppConstant.APP_DIR_THUMB);
+                writeStogare(img_thumb, fileName, date, output);
             }
         });
 
@@ -184,7 +191,13 @@ public class ImageProcessingActivity extends AppCompatActivity {
     private void exportImage(){
         ImageSaver imageSaver = new ImageSaver(this);
         imageSaver.setFileName(Utils.getCurrentTime() + ".png");
-        imageSaver.setDirectoryName(DIRECTORY_NAME);
+        imageSaver.setDirectoryName(AppConstant.APP_FOLDER);
         imageSaver.save(bitmap);
+    }
+
+    private void writeStogare(String img_thumb, String fileName, String date, String pdf_file){
+
+        DatabaseHandler databaseHandler = DatabaseHandler.getInstance(ImageProcessingActivity.this);
+        databaseHandler.addDocument(new Document(img_thumb, fileName, date, pdf_file));
     }
 }
