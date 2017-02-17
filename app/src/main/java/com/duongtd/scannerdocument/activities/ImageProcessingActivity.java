@@ -198,6 +198,8 @@ public class ImageProcessingActivity extends AppCompatActivity {
     private void writeStogare(String img_thumb, String fileName, String date, String pdf_file){
 
         DatabaseHandler databaseHandler = DatabaseHandler.getInstance(ImageProcessingActivity.this);
-        databaseHandler.addDocument(new Document(img_thumb, fileName, date, pdf_file));
+        Document document = new Document(img_thumb, fileName, date, pdf_file);
+        int id = (int)databaseHandler.addDocument(document);
+        document.setId(id);
     }
 }

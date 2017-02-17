@@ -67,7 +67,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Adding new document
-    public void addDocument(Document document) {
+    public long addDocument(Document document) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -77,12 +77,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_PDF_FILE, document.getPdf_file());
 
         // Inserting Row
-        db.insert(TABLE_DOCUMENTS, null, values);
+        long id = db.insert(TABLE_DOCUMENTS, null, values);
         db.close(); // Closing database connection
+        return id;
     }
 
     // Getting single document
-    Document getDocument(int id) {
+    public Document getDocument(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(
